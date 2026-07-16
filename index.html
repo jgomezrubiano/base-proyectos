@@ -809,6 +809,25 @@
   .footer-action-btn:hover{ border-color: var(--teal); color: var(--teal); }
   .footer-action-btn.danger:hover{ border-color: var(--red); color: var(--red); }
 
+  /* ===== DEPLOY LINK BUTTON ===== */
+  .row-link-btn{
+    background: none;
+    border: none;
+    padding: 4px 5px;
+    cursor: pointer;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity .15s ease, background .12s ease;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .proj-row:hover .row-link-btn{ opacity: 1; }
+  .row-link-btn:hover{ background: var(--teal-a10); }
+
   /* ===== DELETE BUTTON ===== */
   .row-delete-btn{
     background: none;
@@ -1384,6 +1403,7 @@ const CHECK_SVG     = `<svg width="14" height="14" viewBox="0 0 24 24" fill="non
 const CHEVRON_SVG   = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
 const TRASH_SVG     = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
 const PENCIL_SVG    = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`;
+const LINK_SVG      = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
 
 const STATUS_OPTIONS = [
   { value: 'active',   label: '🟢 Activo'   },
@@ -1620,6 +1640,7 @@ function rowHTML(p){
         <div class="row-spacer"></div>
         <span class="row-path" title="${p.path}">${p.path}</span>
         <button class="row-copy-btn" aria-label="Copiar ruta" data-path="${p.path}">${CLIPBOARD_SVG}</button>
+        ${p.deployedUrl ? `<button class="row-link-btn" aria-label="Abrir deploy" data-url="${p.deployedUrl}">${LINK_SVG}</button>` : ''}
         <span class="row-date">${relativeDate(getLastActivity(p))}</span>
         <button class="row-delete-btn" aria-label="Eliminar proyecto" data-id="${p.id}">${TRASH_SVG}</button>
         <span class="row-chevron">${CHEVRON_SVG}</span>
@@ -1966,6 +1987,10 @@ mainEl.addEventListener('click', e => {
   /* copy button */
   const copyBtn = e.target.closest('.row-copy-btn');
   if(copyBtn){ e.stopPropagation(); handleCopy(copyBtn); return; }
+
+  /* deploy link button */
+  const linkBtn = e.target.closest('.row-link-btn');
+  if(linkBtn){ e.stopPropagation(); window.open(linkBtn.dataset.url, '_blank', 'noopener,noreferrer'); return; }
 
   /* delete note button */
   const noteDeleteBtn = e.target.closest('.log-note-delete-btn');
