@@ -599,6 +599,27 @@
   .log-edit-cancel-btn{ color: var(--text-muted); }
   .log-edit-cancel-btn:hover{ color: var(--red); background: var(--red-a8); }
 
+  /* ===== DEPLOY BADGE ===== */
+  .row-deploy-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--teal);
+    padding: 2px 7px;
+    border-radius: 9px;
+    cursor: pointer;
+    margin-left: 6px;
+    vertical-align: middle;
+    transition: background .12s ease, transform .1s ease;
+  }
+  .row-deploy-badge:hover{ background: var(--teal-dim); transform: translateY(-1px); }
+
   /* ===== DRAFT PILL ===== */
   .draft-tag{
     display: inline-flex;
@@ -1634,7 +1655,7 @@ function rowHTML(p){
       <div class="proj-row" role="button" tabindex="0" data-id="${p.id}" aria-expanded="false">
         <span class="row-icon status-${eff}">${p.icon || '📁'}</span>
         <div class="row-title-block">
-          <span class="row-title">${p.title}${overrideTag}</span>
+          <span class="row-title">${p.title}${overrideTag}${p.deployedUrl ? `<span class="row-deploy-badge" data-url="${p.deployedUrl}">🔗 Live</span>` : ''}</span>
           <span class="row-area">${p.area}</span>
         </div>
         <div class="row-spacer"></div>
@@ -1991,6 +2012,10 @@ mainEl.addEventListener('click', e => {
   /* deploy link button */
   const linkBtn = e.target.closest('.row-link-btn');
   if(linkBtn){ e.stopPropagation(); window.open(linkBtn.dataset.url, '_blank', 'noopener,noreferrer'); return; }
+
+  /* deploy badge pill */
+  const deployBadge = e.target.closest('.row-deploy-badge');
+  if(deployBadge){ e.stopPropagation(); window.open(deployBadge.dataset.url, '_blank', 'noopener,noreferrer'); return; }
 
   /* delete note button */
   const noteDeleteBtn = e.target.closest('.log-note-delete-btn');
