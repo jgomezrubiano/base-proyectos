@@ -1417,6 +1417,7 @@
   }
 
   .req-card{
+    position: relative;
     background: var(--bg);
     border: 1px solid var(--border-soft);
     border-radius: 10px;
@@ -1466,7 +1467,8 @@
   .req-priority-urgent { color: var(--red);  background: var(--red-a8);  }
   .req-priority-urgent .prio-dot{ background: var(--red);  }
   .req-card-desc{
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 500;
     color: var(--text);
     line-height: 1.5;
     margin-bottom: 10px;
@@ -1481,11 +1483,36 @@
     padding-top: 8px;
     border-top: 1px solid var(--border-soft);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--text-muted);
+    font-size: 10.5px;
+    color: var(--text-2);
     letter-spacing: 0.3px;
   }
   .req-card-meta .who{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
+  /* NEW-CARD marker + pulse */
+  .req-card--new::after{
+    content: 'NUEVA ✦';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.5px;
+    color: var(--teal);
+    background: var(--teal-a10);
+    padding: 2px 7px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
+  .req-card--new .req-card-badges{ padding-right: 60px; }
+  @keyframes reqCardPulse{
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    50%      { box-shadow: 0 0 0 6px var(--teal-a25); }
+  }
+  .req-card--pulse{ animation: reqCardPulse 0.83s ease-out 3; }
+  @media (prefers-reduced-motion: reduce){
+    .req-card--pulse{ animation: none; }
+  }
   .req-card-actions{
     display: flex;
     align-items: center;
@@ -3237,6 +3264,12 @@ render();
   let rows = [];
   const filters = { project: '', priority: '', includeDeclined: false };
   let openNotesId = null;
+  /* Pulse-once-per-session state: sessionLastSeenAt is frozen at first render
+     so cards keep their "new" marker across filter/drag re-renders; the
+     localStorage key updates every render (per spec). */
+  const LAST_SEEN_KEY = 'requestsLastSeen';
+  let sessionLastSeenAt = null;
+  let hasPulsedThisSession = false;
 
   const STATUS_ORDER  = ['new', 'in_progress', 'done', 'declined'];
   const STATUS_LABELS = { new: 'Nueva', in_progress: 'En progreso', done: 'Hecha', declined: 'Rechazada' };
@@ -3459,6 +3492,15 @@ render();
   function renderColumns(){
     const area = document.getElementById('reqBoardArea');
     if(!area) return;
+
+    if(sessionLastSeenAt === null){
+      const raw = localStorage.getItem(LAST_SEEN_KEY);
+      const parsed = raw ? new Date(raw).getTime() : NaN;
+      /* first-ever visit: baseline to now so we don't pulse every existing card */
+      sessionLastSeenAt = isNaN(parsed) ? Date.now() : parsed;
+    }
+    try { localStorage.setItem(LAST_SEEN_KEY, new Date().toISOString()); } catch(_){}
+
     const showDeclined = filters.includeDeclined;
     const cols = showDeclined ? STATUS_ORDER : ['new','in_progress','done'];
 
@@ -3471,6 +3513,7 @@ render();
 
     if(filtered.length === 0){
       area.innerHTML = '<div class="req-board-empty">No hay solicitudes por ahora ✨</div>';
+      hasPulsedThisSession = true;
       return;
     }
 
@@ -3481,11 +3524,15 @@ render();
       grouped[s].push(r);
     });
 
+    const willPulse = !hasPulsedThisSession;
+
     area.innerHTML = `
       <div class="req-columns${showDeclined ? ' show-declined' : ''}">
-        ${cols.map(s => renderCol(s, grouped[s])).join('')}
+        ${cols.map(s => renderCol(s, grouped[s], willPulse)).join('')}
       </div>
     `;
+
+    hasPulsedThisSession = true;
 
     area.querySelectorAll('.req-status-select').forEach(sel => {
       sel.addEventListener('change', e => changeStatus(e.target.dataset.id, e.target.value));
@@ -3577,9 +3624,9 @@ render();
     changeStatus(id, newStatus);
   }
 
-  function renderCol(status, list){
+  function renderCol(status, list, willPulse){
     const cards = list.length
-      ? list.map(renderCard).join('')
+      ? list.map(r => renderCard(r, willPulse)).join('')
       : `<div class="req-col-empty">— vacío —</div>`;
     return `
       <div class="req-col" data-status="${status}">
@@ -3592,7 +3639,7 @@ render();
     `;
   }
 
-  function renderCard(r){
+  function renderCard(r, willPulse){
     const prio = ['quick','medium','urgent'].includes(r.priority) ? r.priority : 'medium';
     const notesOpen = openNotesId === String(r.id);
     const hasNotes  = r.admin_notes && String(r.admin_notes).trim().length > 0;
@@ -3601,8 +3648,13 @@ render();
     ).join('');
     const requester = r.requester || '—';
     const emailTitle = r.email ? ` · ${esc(r.email)}` : '';
+    const createdAt = r.created_at ? new Date(r.created_at).getTime() : NaN;
+    const isNew = !isNaN(createdAt) && sessionLastSeenAt !== null && createdAt > sessionLastSeenAt;
+    const cardCls = ['req-card'];
+    if(isNew) cardCls.push('req-card--new');
+    if(isNew && willPulse) cardCls.push('req-card--pulse');
     return `
-      <div class="req-card" data-id="${esc(r.id)}" draggable="true">
+      <div class="${cardCls.join(' ')}" data-id="${esc(r.id)}" draggable="true">
         <div class="req-card-badges">
           <span class="req-project-badge" title="${esc(r.project || '')}">${esc(r.project || 'Sin proyecto')}</span>
           <span class="req-priority-badge req-priority-${prio}"><span class="prio-dot"></span>${esc(PRIORITY_LABELS[prio])}</span>
