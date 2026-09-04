@@ -4,6 +4,10 @@
 window.SUPABASE_URL = "https://aenejwygqugmzncbstll.supabase.co";
 window.SUPABASE_KEY = "sb_publishable_kPV4uNB9GI4F0RNGflaJoQ_Xk2pVcfh";
 
+/* Public submit-form URL — surfaced by the "Copiar link del form" button
+   in the Requests admin tab. Single source of truth for when the domain changes. */
+window.REQUEST_FORM_URL = "https://base-proyectos-nu.vercel.app/request.html";
+
 /* Stakeholder-facing project list — curated, not the hub's internal PROJECTS.
    Keep "Other / New idea" last. */
 window.REQUEST_PROJECTS = [

@@ -1351,6 +1351,24 @@
   .req-signout-btn:hover{ color: var(--red); }
   .req-refresh-btn.spinning{ opacity: 0.6; }
 
+  /* Copy-form-link pill */
+  .req-copy-link-btn{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .req-copy-link-btn:hover{ border-color: var(--teal); color: var(--teal); }
+  .req-copy-link-btn.copied{ border-color: var(--teal); color: var(--teal); background: var(--teal-a5); }
+
   .req-columns{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -3333,6 +3351,7 @@ render();
         <select class="req-select" id="reqFilterPriority" aria-label="Filtrar por prioridad">${prioOpts}</select>
         <button class="req-toggle${filters.includeDeclined ? ' active' : ''}" id="reqDeclinedToggle" type="button">Ver rechazadas</button>
         <div class="req-topbar-right">
+          <button class="req-copy-link-btn" id="reqCopyLinkBtn" type="button" title="Copiar link del form">🔗 Copiar link del form</button>
           <button class="req-refresh-btn" id="reqRefreshBtn" type="button" title="Refrescar">↻ Refrescar</button>
           <button class="req-signout-btn" id="reqSignoutBtn" type="button">Cerrar sesión</button>
         </div>
@@ -3354,6 +3373,7 @@ render();
       renderColumns();
     });
     document.getElementById('reqRefreshBtn').addEventListener('click', loadRows);
+    document.getElementById('reqCopyLinkBtn').addEventListener('click', copyFormLink);
     document.getElementById('reqSignoutBtn').addEventListener('click', async () => {
       await sb.auth.signOut();
       session = null;
@@ -3387,6 +3407,42 @@ render();
   function updateTabBadge(n){
     if(!tabBadge) return;
     tabBadge.textContent = n > 0 ? String(n) : '';
+  }
+
+  async function copyFormLink(){
+    const btn = document.getElementById('reqCopyLinkBtn');
+    if(!btn) return;
+    /* fallback keeps working if config.js hasn't been reloaded (cached) */
+    const url = window.REQUEST_FORM_URL || 'https://base-proyectos-nu.vercel.app/request.html';
+    const original = btn.textContent;
+
+    const flash = (text, ok) => {
+      btn.textContent = text;
+      if(ok) btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('copied');
+      }, 1500);
+    };
+
+    if(navigator.clipboard && window.isSecureContext){
+      try { await navigator.clipboard.writeText(url); flash('✓ Copiado', true); return; }
+      catch(_){ /* fall through to legacy path */ }
+    }
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      flash(ok ? '✓ Copiado' : '✕ Error', ok);
+    } catch(_){ flash('✕ Error', false); }
   }
 
   function renderColumns(){
