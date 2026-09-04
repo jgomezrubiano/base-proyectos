@@ -8,13 +8,10 @@ window.SUPABASE_KEY = "sb_publishable_kPV4uNB9GI4F0RNGflaJoQ_Xk2pVcfh";
    Keep "Other / New idea" last. */
 window.REQUEST_PROJECTS = [
   "Booked vs Budget",
-  "Canada Gradeout Pipeline (GDS)",
   "Trucking KPI's",
   "ODS v2 — Outlier Detection",
   "Standarizer — Client Data Standardization",
   "PS Benchmarking",
-  "HR Email Intelligence",
-  "Commission Automation",
   "Hatching Egg & Chick Cost",
   "Order Cancellation Tracking",
   "Other / New idea"
