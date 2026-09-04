@@ -1495,6 +1495,28 @@
     transition: border-color .15s ease;
   }
   .req-status-select:focus{ border-color: var(--teal); }
+
+  /* ===== REQUESTS DRAG & DROP ===== */
+  .req-card[draggable="true"]{ cursor: grab; }
+  .req-card[draggable="true"]:active{ cursor: grabbing; }
+  .req-card.req-drag--source{ opacity: 0.45; }
+  .req-col.req-col--drop-target{
+    background: var(--teal-a5);
+    border-color: var(--teal);
+    border-style: dashed;
+  }
+  /* form controls inside cards keep their own cursor */
+  .req-card[draggable="true"] select,
+  .req-card[draggable="true"] button,
+  .req-card[draggable="true"] textarea{ cursor: auto; }
+  .req-card[draggable="true"] .req-status-select,
+  .req-card[draggable="true"] .req-notes-btn{ cursor: pointer; }
+
+  @media (prefers-reduced-motion: no-preference){
+    .req-col{ transition: background-color .12s ease, border-color .12s ease; }
+    .req-card.req-drag--source{ transition: opacity .12s ease; }
+  }
+
   .req-notes-btn{
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
@@ -3411,6 +3433,70 @@ render();
         });
       }
     }
+
+    wireDnd();
+  }
+
+  let dragSourceId = null;
+  let dragSourceStatus = null;
+
+  function wireDnd(){
+    area.querySelectorAll('.req-card').forEach(card => {
+      card.addEventListener('dragstart', onCardDragStart);
+      card.addEventListener('dragend',   onCardDragEnd);
+    });
+    area.querySelectorAll('.req-col').forEach(col => {
+      col.addEventListener('dragover',  onColDragOver);
+      col.addEventListener('dragleave', onColDragLeave);
+      col.addEventListener('drop',      onColDrop);
+    });
+  }
+
+  function onCardDragStart(e){
+    const card = e.currentTarget;
+    dragSourceId     = card.dataset.id;
+    const col        = card.closest('.req-col');
+    dragSourceStatus = col ? col.dataset.status : null;
+    card.classList.add('req-drag--source');
+    if(e.dataTransfer){
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', dragSourceId); } catch(_){}
+    }
+  }
+
+  function onCardDragEnd(e){
+    e.currentTarget.classList.remove('req-drag--source');
+    area.querySelectorAll('.req-col--drop-target').forEach(c => c.classList.remove('req-col--drop-target'));
+    dragSourceId = null;
+    dragSourceStatus = null;
+  }
+
+  function onColDragOver(e){
+    if(!dragSourceId) return;
+    const col = e.currentTarget;
+    if(col.dataset.status === dragSourceStatus) return;
+    e.preventDefault();
+    if(e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    col.classList.add('req-col--drop-target');
+  }
+
+  function onColDragLeave(e){
+    const col = e.currentTarget;
+    if(e.relatedTarget && col.contains(e.relatedTarget)) return;
+    col.classList.remove('req-col--drop-target');
+  }
+
+  function onColDrop(e){
+    const col = e.currentTarget;
+    col.classList.remove('req-col--drop-target');
+    if(!dragSourceId) return;
+    const newStatus = col.dataset.status;
+    if(!newStatus || newStatus === dragSourceStatus) return;
+    e.preventDefault();
+    const id = dragSourceId;
+    dragSourceId = null;
+    dragSourceStatus = null;
+    changeStatus(id, newStatus);
   }
 
   function renderCol(status, list){
@@ -3438,7 +3524,7 @@ render();
     const requester = r.requester || '—';
     const emailTitle = r.email ? ` · ${esc(r.email)}` : '';
     return `
-      <div class="req-card" data-id="${esc(r.id)}">
+      <div class="req-card" data-id="${esc(r.id)}" draggable="true">
         <div class="req-card-badges">
           <span class="req-project-badge" title="${esc(r.project || '')}">${esc(r.project || 'Sin proyecto')}</span>
           <span class="req-priority-badge req-priority-${prio}"><span class="prio-dot"></span>${esc(PRIORITY_LABELS[prio])}</span>
