@@ -152,6 +152,31 @@
   }
   .input::placeholder, .textarea::placeholder { color: var(--text-muted); }
 
+  /* Email domain autocomplete chip */
+  .email-chip {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 6px;
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: color .18s ease, border-color .18s ease, background-color .18s ease;
+    outline: none;
+  }
+  .email-chip:hover,
+  .email-chip:focus-visible {
+    color: var(--terracotta);
+    border-color: var(--terracotta);
+    background: rgba(217, 119, 87, 0.06);
+  }
+  .email-chip.hidden { display: none; }
+
   .textarea {
     resize: vertical;
     min-height: 72px;
@@ -346,6 +371,7 @@
     .seg-slider, .submit, .input, .select, .textarea, .seg-btn { transition: none; }
     .success.show { animation: none; }
     .spinner { animation-duration: 1.4s; }
+    .email-chip { transition: none; }
   }
 </style>
 </head>
@@ -390,6 +416,7 @@
           <div class="field">
             <label for="f-email">Email<span class="opt">so I can follow up</span></label>
             <input id="f-email" class="input" type="email" autocomplete="email" placeholder="jane@company.com">
+            <button type="button" class="email-chip" id="email-domain-chip" aria-label="Append @hylinena.com to email">@hylinena.com</button>
           </div>
         </div>
 
@@ -460,6 +487,30 @@
     });
   });
 
+  const emailInput = document.getElementById('f-email');
+  const domainChip = document.getElementById('email-domain-chip');
+  const EMAIL_DOMAIN = '@hylinena.com';
+
+  function syncDomainChip(){
+    if (emailInput.value.includes('@')) domainChip.classList.add('hidden');
+    else domainChip.classList.remove('hidden');
+  }
+  emailInput.addEventListener('input', syncDomainChip);
+  domainChip.addEventListener('click', () => {
+    const current = emailInput.value;
+    if (current.length === 0) {
+      emailInput.value = EMAIL_DOMAIN;
+      emailInput.focus();
+      emailInput.setSelectionRange(0, 0);
+    } else if (!current.includes('@')) {
+      emailInput.value = current + EMAIL_DOMAIN;
+      emailInput.focus();
+      const end = emailInput.value.length;
+      emailInput.setSelectionRange(end, end);
+    }
+    syncDomainChip();
+  });
+
   const form = document.getElementById('request-form');
   const btn = document.getElementById('submit-btn');
   const btnLabel = btn.querySelector('.submit-label');
@@ -514,6 +565,7 @@
   document.getElementById('again-btn').addEventListener('click', () => {
     form.reset();
     setPriority('medium', false);
+    syncDomainChip();
     clearError();
     btn.disabled = false;
     btn.classList.remove('loading');
