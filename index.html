@@ -3198,9 +3198,10 @@ render();
   }
   switchButtons.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
 
-  setView(localStorage.getItem(VIEW_KEY) || 'proyectos');
-
-  /* ---- Requests module ---- */
+  /* ---- Requests module ----
+     Declared BEFORE the load-time setView() below: a saved 'requests' view
+     calls initRequests() at load, which touches these bindings — moving them
+     down puts them in the TDZ and the tab renders empty. */
   let sb = null;
   let requestsInit = false;
   let session = null;
@@ -3211,6 +3212,8 @@ render();
   const STATUS_ORDER  = ['new', 'in_progress', 'done', 'declined'];
   const STATUS_LABELS = { new: 'Nueva', in_progress: 'En progreso', done: 'Hecha', declined: 'Rechazada' };
   const PRIORITY_LABELS = { quick: 'Rápida', medium: 'Media', urgent: 'Urgente' };
+
+  setView(localStorage.getItem(VIEW_KEY) || 'proyectos');
 
   function esc(s){
     return String(s == null ? '' : s)
