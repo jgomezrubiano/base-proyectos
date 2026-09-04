@@ -1606,6 +1606,17 @@
     letter-spacing: 1px;
     text-transform: uppercase;
   }
+  .req-board-empty{
+    padding: 60px 20px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
   .req-board-error{
     padding: 16px 18px;
     background: var(--red-a8);
@@ -3454,8 +3465,14 @@ render();
     const filtered = rows.filter(r => {
       if(filters.project  && r.project  !== filters.project)  return false;
       if(filters.priority && r.priority !== filters.priority) return false;
+      if(!showDeclined    && r.status   === 'declined')       return false;
       return true;
     });
+
+    if(filtered.length === 0){
+      area.innerHTML = '<div class="req-board-empty">No hay solicitudes por ahora ✨</div>';
+      return;
+    }
 
     const grouped = {};
     STATUS_ORDER.forEach(s => { grouped[s] = []; });
@@ -3500,6 +3517,8 @@ render();
   let dragSourceStatus = null;
 
   function wireDnd(){
+    const area = document.getElementById('reqBoardArea');
+    if(!area) return;
     area.querySelectorAll('.req-card').forEach(card => {
       card.addEventListener('dragstart', onCardDragStart);
       card.addEventListener('dragend',   onCardDragEnd);
@@ -3525,7 +3544,7 @@ render();
 
   function onCardDragEnd(e){
     e.currentTarget.classList.remove('req-drag--source');
-    area.querySelectorAll('.req-col--drop-target').forEach(c => c.classList.remove('req-col--drop-target'));
+    document.querySelectorAll('.req-col--drop-target').forEach(c => c.classList.remove('req-col--drop-target'));
     dragSourceId = null;
     dragSourceStatus = null;
   }
