@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Dept — Feature Request</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1c1c1a;
+    --card: rgba(48, 48, 46, 0.72);
+    --card-solid: #30302e;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --text: #e5e2dc;
+    --text-2: #b0aca3;
+    --text-muted: #7a766d;
+    --terracotta: #d97757;
+    --terracotta-dim: #bf6040;
+    --terracotta-glow: rgba(217, 119, 87, 0.35);
+    --coral: #c9756a;
+    --gold: #d4a94f;
+    --grey: #8a867d;
+    --danger: #e58a86;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Ambient background */
+  .bg-grid {
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.6), transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.6), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-orb {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 720px; height: 720px;
+    background: radial-gradient(circle, var(--terracotta-glow) 0%, transparent 60%);
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+    transform: translate(-50%, -50%);
+    animation: orbDrift 18s ease-in-out infinite;
+  }
+  @keyframes orbDrift {
+    0%, 100% { transform: translate(-50%, -50%) scale(1);      opacity: 0.55; }
+    50%      { transform: translate(-46%, -54%) scale(1.06);   opacity: 0.75; }
+  }
+
+  /* Card */
+  .card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    background: var(--card);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 32px 32px 28px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      0 20px 60px rgba(0,0,0,0.45);
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--terracotta);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .lede {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  .field { margin-bottom: 14px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  .field-row .field { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  label .req { color: var(--terracotta); margin-left: 2px; }
+  label .opt {
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    margin-left: 6px;
+    font-style: italic;
+  }
+
+  .input, .select, .textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+  }
+  .input:focus, .select:focus, .textarea:focus {
+    border-color: var(--terracotta);
+    box-shadow: 0 0 0 3px var(--terracotta-glow);
+    background: rgba(0,0,0,0.35);
+  }
+  .input::placeholder, .textarea::placeholder { color: var(--text-muted); }
+
+  .textarea {
+    resize: vertical;
+    min-height: 72px;
+    max-height: 140px;
+    line-height: 1.45;
+  }
+
+  .select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a766d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+    cursor: pointer;
+  }
+  .select option { background: var(--card-solid); color: var(--text); }
+
+  /* Segmented priority control */
+  .segmented {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: rgba(0,0,0,0.28);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    height: 40px;
+  }
+  .seg-slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    bottom: 4px;
+    width: calc((100% - 8px) / 3);
+    border-radius: 7px;
+    background: var(--grey);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    transition: transform .28s cubic-bezier(.4,0,.2,1), background-color .22s ease;
+    pointer-events: none;
+  }
+  .seg-btn {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    border: 0;
+    color: var(--text-2);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color .18s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    outline: none;
+  }
+  .seg-btn:focus-visible { color: var(--text); }
+  .seg-btn .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    transition: opacity .18s ease;
+    opacity: 0.55;
+  }
+  .seg-btn[data-p="quick"]  .dot { background: var(--grey); }
+  .seg-btn[data-p="medium"] .dot { background: var(--gold); }
+  .seg-btn[data-p="urgent"] .dot { background: var(--coral); }
+  .seg-btn[aria-selected="true"] { color: #fff; font-weight: 600; }
+  .seg-btn[aria-selected="true"] .dot { opacity: 0; }
+
+  /* Submit */
+  .submit {
+    width: 100%;
+    height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--terracotta);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    transition: background-color .18s ease, transform .08s ease;
+    box-shadow: 0 8px 24px -8px var(--terracotta-glow);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .submit:hover:not(:disabled) { background: var(--terracotta-dim); }
+  .submit:active:not(:disabled) { transform: translateY(1px); }
+  .submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  .spinner {
+    display: none;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  .submit.loading .spinner { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Error */
+  .err {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: rgba(229, 138, 134, 0.10);
+    border: 1px solid rgba(229, 138, 134, 0.28);
+    border-radius: 8px;
+    color: var(--danger);
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .err.show { display: block; }
+
+  .foot-note {
+    margin-top: 18px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Success state */
+  .success {
+    display: none;
+    text-align: center;
+    padding: 6px 4px 4px;
+  }
+  .success.show { display: block; animation: fadeUp .4s ease-out; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .success-icon {
+    width: 56px; height: 56px;
+    margin: 6px auto 18px;
+    border-radius: 50%;
+    background: rgba(217, 119, 87, 0.14);
+    border: 1px solid rgba(217, 119, 87, 0.35);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--terracotta);
+  }
+  .success h2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+  }
+  .success p {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0 auto 24px;
+    max-width: 340px;
+  }
+  .again-btn {
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 22px;
+    cursor: pointer;
+    transition: border-color .18s ease, color .18s ease, background-color .18s ease;
+  }
+  .again-btn:hover {
+    border-color: var(--terracotta);
+    color: var(--terracotta);
+    background: rgba(217, 119, 87, 0.06);
+  }
+
+  #form-wrap.hidden { display: none; }
+
+  @media (max-width: 520px) {
+    body { padding: 16px; overflow: auto; }
+    .card { padding: 24px 20px 22px; }
+    .field-row { grid-template-columns: 1fr; gap: 0; margin-bottom: 0; }
+    .field-row .field { margin-bottom: 14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-orb { animation: none; }
+    .seg-slider, .submit, .input, .select, .textarea, .seg-btn { transition: none; }
+    .success.show { animation: none; }
+    .spinner { animation-duration: 1.4s; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-orb" aria-hidden="true"></div>
+
+  <div class="card">
+
+    <div id="form-wrap">
+      <div class="eyebrow">Data Dept · Request</div>
+      <h1>What do you need built?</h1>
+      <p class="lede">Drop a quick note. I review these weekly and follow up if something's unclear.</p>
+
+      <form id="request-form" novalidate>
+        <div class="field">
+          <label for="f-project">Project</label>
+          <select id="f-project" class="select" required></select>
+        </div>
+
+        <div class="field">
+          <label for="f-desc">Description<span class="req">*</span></label>
+          <textarea id="f-desc" class="textarea" required
+            placeholder="What do you need? What should it do?"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Priority</label>
+          <div class="segmented" role="tablist" aria-label="Priority">
+            <span class="seg-slider" id="seg-slider" aria-hidden="true"></span>
+            <button type="button" class="seg-btn" data-p="quick"  role="tab" aria-selected="false" tabindex="-1"><span class="dot"></span>Quick</button>
+            <button type="button" class="seg-btn" data-p="medium" role="tab" aria-selected="true"  tabindex="0"><span class="dot"></span>Medium</button>
+            <button type="button" class="seg-btn" data-p="urgent" role="tab" aria-selected="false" tabindex="-1"><span class="dot"></span>Urgent</button>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="f-name">Your name<span class="req">*</span></label>
+            <input id="f-name" class="input" type="text" required autocomplete="name" placeholder="Jane Doe">
+          </div>
+          <div class="field">
+            <label for="f-email">Email<span class="opt">so I can follow up</span></label>
+            <input id="f-email" class="input" type="email" autocomplete="email" placeholder="jane@company.com">
+          </div>
+        </div>
+
+        <button type="submit" class="submit" id="submit-btn">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="submit-label">Send request</span>
+        </button>
+
+        <div class="err" id="err" role="alert" aria-live="polite"></div>
+
+        <div class="foot-note">Data Dept — Internal</div>
+      </form>
+    </div>
+
+    <div class="success" id="success" aria-live="polite">
+      <div class="success-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2>Got it &mdash; thanks.</h2>
+      <p>I review these weekly. If I need more context I'll reach out on the email you left.</p>
+      <button type="button" class="again-btn" id="again-btn">Submit another</button>
+    </div>
+
+  </div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  const sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+
+  const sel = document.getElementById('f-project');
+  const opts = ['<option value="" disabled selected>Select a project&hellip;</option>']
+    .concat(window.REQUEST_PROJECTS.map(p => {
+      const safe = p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      return `<option value="${safe}">${safe}</option>`;
+    }));
+  sel.innerHTML = opts.join('');
+
+  const segButtons = Array.from(document.querySelectorAll('.seg-btn'));
+  const slider = document.getElementById('seg-slider');
+  const PRIORITY_COLORS = { quick: '#8a867d', medium: '#d4a94f', urgent: '#c9756a' };
+  let selectedPriority = 'medium';
+
+  function setPriority(p, focus){
+    selectedPriority = p;
+    const idx = segButtons.findIndex(b => b.dataset.p === p);
+    slider.style.transform = `translateX(${idx * 100}%)`;
+    slider.style.background = PRIORITY_COLORS[p];
+    segButtons.forEach((b, i) => {
+      const on = i === idx;
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.setAttribute('tabindex', on ? '0' : '-1');
+    });
+    if (focus) segButtons[idx].focus();
+  }
+  setPriority('medium', false);
+
+  segButtons.forEach(b => {
+    b.addEventListener('click', () => setPriority(b.dataset.p, false));
+    b.addEventListener('keydown', (e) => {
+      const i = segButtons.indexOf(document.activeElement);
+      if (i < 0) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); setPriority(segButtons[(i + 1) % segButtons.length].dataset.p, true); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); setPriority(segButtons[(i - 1 + segButtons.length) % segButtons.length].dataset.p, true); }
+    });
+  });
+
+  const form = document.getElementById('request-form');
+  const btn = document.getElementById('submit-btn');
+  const btnLabel = btn.querySelector('.submit-label');
+  const errBox = document.getElementById('err');
+  const successBox = document.getElementById('success');
+  const formWrap = document.getElementById('form-wrap');
+
+  function showError(msg){ errBox.textContent = msg; errBox.classList.add('show'); }
+  function clearError(){ errBox.classList.remove('show'); errBox.textContent = ''; }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError();
+
+    const project     = sel.value.trim();
+    const description = document.getElementById('f-desc').value.trim();
+    const name        = document.getElementById('f-name').value.trim();
+    const email       = document.getElementById('f-email').value.trim();
+
+    if (!project)     { showError('Please pick a project.'); return; }
+    if (!description) { showError('A short description helps me understand what you need.'); return; }
+    if (!name)        { showError('Please add your name so I know who to follow up with.'); return; }
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btnLabel.textContent = 'Sending…';
+
+    const payload = {
+      project,
+      description,
+      priority: selectedPriority,
+      requester: name,
+      email: email || null
+    };
+
+    try {
+      const { error } = await sb.from('requests').insert(payload);
+      if (error) throw error;
+
+      formWrap.classList.add('hidden');
+      successBox.classList.add('show');
+    } catch (err) {
+      console.error('Insert failed:', err);
+      const detail = (err && err.message) ? ` (${err.message})` : '';
+      showError('Couldn’t send that just now — please try again in a moment.' + detail);
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btnLabel.textContent = 'Send request';
+    }
+  });
+
+  document.getElementById('again-btn').addEventListener('click', () => {
+    form.reset();
+    setPriority('medium', false);
+    clearError();
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btnLabel.textContent = 'Send request';
+    successBox.classList.remove('show');
+    formWrap.classList.remove('hidden');
+    document.getElementById('f-project').focus();
+  });
+})();
+</script>
+</body>
+</html>

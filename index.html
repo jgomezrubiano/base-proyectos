@@ -1164,6 +1164,425 @@
   @media (prefers-reduced-motion: reduce){
     .proj-row, .row-chevron, .row-copy-btn, .row-delete-btn, .proj-expand{ transition: none; }
   }
+
+  /* ===== VIEW SWITCHER (Proyectos | Requests) ===== */
+  .view-switcher{
+    display: flex;
+    gap: 2px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .view-switch-btn{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 11px 20px;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .view-switch-btn:hover{ color: var(--text-2); }
+  .view-switch-btn.active{ color: var(--teal); border-bottom-color: var(--teal); }
+  .view-badge-count{
+    display: inline-block;
+    margin-left: 6px;
+    background: var(--teal-a10);
+    color: var(--teal);
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+  }
+  .view-badge-count:empty{ display: none; }
+
+  /* ===== REQUESTS VIEW ===== */
+  .req-view[hidden]{ display: none; }
+
+  .req-login{
+    max-width: 380px;
+    margin: 40px auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 26px 24px;
+  }
+  .req-login-eyebrow{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--teal);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .req-login h2{
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .req-login p.hint{
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 20px;
+  }
+  .req-login label{
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin: 12px 0 6px;
+    font-weight: 500;
+  }
+  .req-input{
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .15s ease;
+  }
+  .req-input:focus{ border-color: var(--teal); }
+  .req-btn-primary{
+    width: 100%;
+    margin-top: 16px;
+    height: 40px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--teal);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    transition: background-color .15s ease;
+  }
+  .req-btn-primary:hover:not(:disabled){ background: var(--teal-dim); }
+  .req-btn-primary:disabled{ opacity: 0.6; cursor: not-allowed; }
+  .req-error{
+    display: none;
+    margin-top: 12px;
+    padding: 9px 11px;
+    background: var(--red-a8);
+    border: 1px solid var(--red-a7);
+    border-radius: 7px;
+    color: var(--red);
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .req-error.show{ display: block; }
+
+  .req-topbar{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .req-select{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 30px 7px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-2);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239a9da3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 11px center;
+    transition: border-color .15s ease, color .15s ease;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .req-select:focus{ border-color: var(--teal); color: var(--teal); }
+  .req-select option{ background: var(--card); color: var(--text); text-transform: none; }
+  .req-toggle{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all .15s ease;
+    text-transform: uppercase;
+  }
+  .req-toggle:hover{ border-color: var(--teal); color: var(--teal); }
+  .req-toggle.active{ background: var(--teal); border-color: var(--teal); color: #fff; }
+  .req-topbar-right{
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .req-refresh-btn, .req-signout-btn{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-muted);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 4px 6px;
+    transition: color .15s ease;
+  }
+  .req-refresh-btn:hover{ color: var(--teal); }
+  .req-signout-btn:hover{ color: var(--red); }
+  .req-refresh-btn.spinning{ opacity: 0.6; }
+
+  .req-columns{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .req-columns.show-declined{ grid-template-columns: repeat(4, 1fr); }
+  .req-col{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px 12px;
+    min-height: 200px;
+  }
+  .req-col-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+  .req-col-title{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .req-col-count{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-muted);
+    background: var(--hover-bg);
+    padding: 1px 8px;
+    border-radius: 10px;
+  }
+  .req-col-empty{
+    padding: 30px 8px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .req-card{
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 12px 12px 10px;
+    margin-bottom: 10px;
+    transition: border-color .15s ease;
+  }
+  .req-card:hover{ border-color: var(--border); }
+  .req-card:last-child{ margin-bottom: 0; }
+  .req-card-badges{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .req-project-badge{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--purple);
+    background: var(--purple-a10);
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .req-priority-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    padding: 2px 8px 2px 7px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .req-priority-badge .prio-dot{ width: 5px; height: 5px; border-radius: 50%; }
+  .req-priority-quick  { color: var(--grey); background: var(--grey-a7); }
+  .req-priority-quick  .prio-dot{ background: var(--grey); }
+  .req-priority-medium { color: var(--gold); background: var(--gold-a7); }
+  .req-priority-medium .prio-dot{ background: var(--gold); }
+  .req-priority-urgent { color: var(--red);  background: var(--red-a8);  }
+  .req-priority-urgent .prio-dot{ background: var(--red);  }
+  .req-card-desc{
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .req-card-meta{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+  .req-card-meta .who{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .req-card-actions{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .req-status-select{
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 22px 5px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-2);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%239a9da3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 7px center;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    transition: border-color .15s ease;
+  }
+  .req-status-select:focus{ border-color: var(--teal); }
+  .req-notes-btn{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text-2);
+    cursor: pointer;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    transition: all .15s ease;
+  }
+  .req-notes-btn:hover{ border-color: var(--teal); color: var(--teal); }
+  .req-notes-btn.has-notes{ color: var(--teal); border-color: var(--teal-a25); background: var(--teal-a5); }
+
+  .req-notes-editor{
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--hover-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .req-notes-editor textarea{
+    width: 100%;
+    min-height: 60px;
+    max-height: 160px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    resize: vertical;
+    outline: none;
+  }
+  .req-notes-editor textarea:focus{ border-color: var(--teal); }
+  .req-notes-actions{
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .req-notes-cancel, .req-notes-save{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    transition: all .15s ease;
+  }
+  .req-notes-save{ background: var(--teal); border-color: var(--teal); color: #fff; }
+  .req-notes-save:hover{ background: var(--teal-dim); }
+  .req-notes-cancel:hover{ border-color: var(--red); color: var(--red); }
+
+  .req-loading{
+    padding: 40px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .req-board-error{
+    padding: 16px 18px;
+    background: var(--red-a8);
+    border: 1px solid var(--red-a7);
+    border-radius: 10px;
+    color: var(--red);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 900px){
+    .req-columns, .req-columns.show-declined{ grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px){
+    .req-topbar{ gap: 8px; }
+    .req-topbar-right{ margin-left: 0; width: 100%; justify-content: space-between; }
+  }
 </style>
 </head>
 <body>
@@ -1228,6 +1647,13 @@
     </div>
   </header>
 
+  <nav class="view-switcher" role="tablist" aria-label="Vistas">
+    <button class="view-switch-btn active" data-view="proyectos" role="tab" aria-selected="true" type="button">Proyectos</button>
+    <button class="view-switch-btn" data-view="requests" role="tab" aria-selected="false" type="button">Requests<span class="view-badge-count" id="reqTabBadge"></span></button>
+  </nav>
+
+  <div id="proyectosView">
+
   <div class="status-strip" id="statusStrip"></div>
 
   <div class="filter-bar" id="filterBar">
@@ -1256,6 +1682,10 @@
     </aside>
   </div>
 
+  </div><!-- /proyectosView -->
+
+  <section id="requestsView" class="req-view" hidden></section>
+
   <footer>
     <span>editable vía Claude Code — data embebida en este archivo</span>
     <span id="totalCount">—</span>
@@ -1263,6 +1693,8 @@
 
 </div>
 
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* =====================================================
    DATA — editar este objeto para actualizar la página.
@@ -2715,6 +3147,356 @@ render();
     applyTheme(!isDark);
   });
   applyTheme(document.documentElement.getAttribute('data-theme') === 'dark');
+})();
+
+/* ===== VIEW SWITCHER + REQUESTS TAB ===== */
+(function(){
+  const VIEW_KEY = 'hlna_home_view';
+  const views = {
+    proyectos: document.getElementById('proyectosView'),
+    requests:  document.getElementById('requestsView')
+  };
+  const switchButtons = Array.from(document.querySelectorAll('.view-switch-btn'));
+  const tabBadge = document.getElementById('reqTabBadge');
+
+  function setView(name){
+    if(!views[name]) name = 'proyectos';
+    Object.keys(views).forEach(k => {
+      const on = k === name;
+      if(on){ views[k].removeAttribute('hidden'); }
+      else  { views[k].setAttribute('hidden', ''); }
+    });
+    switchButtons.forEach(b => {
+      const on = b.dataset.view === name;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    localStorage.setItem(VIEW_KEY, name);
+    if(name === 'requests') initRequests();
+  }
+  switchButtons.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+
+  setView(localStorage.getItem(VIEW_KEY) || 'proyectos');
+
+  /* ---- Requests module ---- */
+  let sb = null;
+  let requestsInit = false;
+  let session = null;
+  let rows = [];
+  const filters = { project: '', priority: '', includeDeclined: false };
+  let openNotesId = null;
+
+  const STATUS_ORDER  = ['new', 'in_progress', 'done', 'declined'];
+  const STATUS_LABELS = { new: 'Nueva', in_progress: 'En progreso', done: 'Hecha', declined: 'Rechazada' };
+  const PRIORITY_LABELS = { quick: 'Rápida', medium: 'Media', urgent: 'Urgente' };
+
+  function esc(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function fmtRelative(iso){
+    if(!iso) return '';
+    const then = new Date(iso).getTime();
+    if(isNaN(then)) return '';
+    const diff = Math.max(0, Date.now() - then);
+    const m = Math.floor(diff / 60000);
+    if(m < 1)   return 'hace segundos';
+    if(m < 60)  return `hace ${m} min`;
+    const h = Math.floor(m / 60);
+    if(h < 24)  return `hace ${h} h`;
+    const d = Math.floor(h / 24);
+    if(d < 2)   return 'ayer';
+    if(d < 14)  return `hace ${d} d`;
+    const w = Math.floor(d / 7);
+    if(w < 8)   return `hace ${w} sem`;
+    const mo = Math.floor(d / 30);
+    if(mo < 12) return `hace ${mo} meses`;
+    return new Date(iso).toLocaleDateString('es');
+  }
+
+  function initRequests(){
+    if(!requestsInit){
+      if(!window.supabase || !window.SUPABASE_URL){
+        views.requests.innerHTML = '<div class="req-board-error">No pude cargar Supabase. Revisa <code>config.js</code> y la conexión.</div>';
+        return;
+      }
+      sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+      requestsInit = true;
+      sb.auth.onAuthStateChange((_ev, s) => {
+        const wasLoggedIn = !!session;
+        session = s;
+        if(!views.requests.hasAttribute('hidden')){
+          if((!wasLoggedIn && s) || (wasLoggedIn && !s)) renderShell();
+        }
+      });
+    }
+    views.requests.innerHTML = '<div class="req-loading">Cargando…</div>';
+    sb.auth.getSession().then(({ data }) => {
+      session = data.session;
+      renderShell();
+    }).catch(err => {
+      views.requests.innerHTML = `<div class="req-board-error">Error de sesión: ${esc(err.message || err)}</div>`;
+    });
+  }
+
+  function renderShell(){
+    if(!session){ renderLogin(); return; }
+    renderBoardFrame();
+    loadRows();
+  }
+
+  function renderLogin(){
+    views.requests.innerHTML = `
+      <div class="req-login">
+        <div class="req-login-eyebrow">Requests · admin</div>
+        <h2>Ingresar</h2>
+        <p class="hint">Usa tu cuenta de Supabase para ver el board.</p>
+        <form id="reqLoginForm" novalidate>
+          <label for="reqLoginEmail">Email</label>
+          <input class="req-input" type="email" id="reqLoginEmail" autocomplete="email" required>
+          <label for="reqLoginPwd">Contraseña</label>
+          <input class="req-input" type="password" id="reqLoginPwd" autocomplete="current-password" required>
+          <button type="submit" class="req-btn-primary" id="reqLoginBtn">Ingresar</button>
+          <div class="req-error" id="reqLoginErr" role="alert" aria-live="polite"></div>
+        </form>
+      </div>
+    `;
+    const form = document.getElementById('reqLoginForm');
+    const btn  = document.getElementById('reqLoginBtn');
+    const err  = document.getElementById('reqLoginErr');
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      err.classList.remove('show');
+      const email    = document.getElementById('reqLoginEmail').value.trim();
+      const password = document.getElementById('reqLoginPwd').value;
+      if(!email || !password){
+        err.textContent = 'Ingresa email y contraseña.';
+        err.classList.add('show');
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Ingresando…';
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if(error){
+        err.textContent = error.message || 'No pude ingresar. Verifica tus credenciales.';
+        err.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = 'Ingresar';
+        return;
+      }
+      session = data.session;
+      renderShell();
+    });
+    setTimeout(() => { const el = document.getElementById('reqLoginEmail'); if(el) el.focus(); }, 30);
+  }
+
+  function renderBoardFrame(){
+    const projOpts = ['<option value="">Todos los proyectos</option>']
+      .concat((window.REQUEST_PROJECTS || []).map(p => `<option value="${esc(p)}">${esc(p)}</option>`))
+      .join('');
+    const prioOpts = `
+      <option value="">Todas las prioridades</option>
+      <option value="urgent">Urgente</option>
+      <option value="medium">Media</option>
+      <option value="quick">Rápida</option>
+    `;
+    views.requests.innerHTML = `
+      <div class="req-topbar">
+        <select class="req-select" id="reqFilterProject" aria-label="Filtrar por proyecto">${projOpts}</select>
+        <select class="req-select" id="reqFilterPriority" aria-label="Filtrar por prioridad">${prioOpts}</select>
+        <button class="req-toggle${filters.includeDeclined ? ' active' : ''}" id="reqDeclinedToggle" type="button">Ver rechazadas</button>
+        <div class="req-topbar-right">
+          <button class="req-refresh-btn" id="reqRefreshBtn" type="button" title="Refrescar">↻ Refrescar</button>
+          <button class="req-signout-btn" id="reqSignoutBtn" type="button">Cerrar sesión</button>
+        </div>
+      </div>
+      <div id="reqBoardArea"><div class="req-loading">Cargando requests…</div></div>
+    `;
+    document.getElementById('reqFilterProject').value = filters.project;
+    document.getElementById('reqFilterPriority').value = filters.priority;
+
+    document.getElementById('reqFilterProject').addEventListener('change', e => {
+      filters.project = e.target.value; renderColumns();
+    });
+    document.getElementById('reqFilterPriority').addEventListener('change', e => {
+      filters.priority = e.target.value; renderColumns();
+    });
+    document.getElementById('reqDeclinedToggle').addEventListener('click', e => {
+      filters.includeDeclined = !filters.includeDeclined;
+      e.currentTarget.classList.toggle('active', filters.includeDeclined);
+      renderColumns();
+    });
+    document.getElementById('reqRefreshBtn').addEventListener('click', loadRows);
+    document.getElementById('reqSignoutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      session = null;
+      rows = [];
+      openNotesId = null;
+      updateTabBadge(0);
+      renderLogin();
+    });
+  }
+
+  async function loadRows(){
+    const refresh = document.getElementById('reqRefreshBtn');
+    if(refresh){ refresh.classList.add('spinning'); }
+    try {
+      const { data, error } = await sb.from('requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if(error) throw error;
+      rows = data || [];
+      renderColumns();
+      updateTabBadge(rows.filter(r => r.status === 'new').length);
+    } catch (err) {
+      console.error(err);
+      const area = document.getElementById('reqBoardArea');
+      if(area) area.innerHTML = `<div class="req-board-error">No pude cargar los requests: ${esc(err.message || err)}</div>`;
+    } finally {
+      if(refresh){ refresh.classList.remove('spinning'); }
+    }
+  }
+
+  function updateTabBadge(n){
+    if(!tabBadge) return;
+    tabBadge.textContent = n > 0 ? String(n) : '';
+  }
+
+  function renderColumns(){
+    const area = document.getElementById('reqBoardArea');
+    if(!area) return;
+    const showDeclined = filters.includeDeclined;
+    const cols = showDeclined ? STATUS_ORDER : ['new','in_progress','done'];
+
+    const filtered = rows.filter(r => {
+      if(filters.project  && r.project  !== filters.project)  return false;
+      if(filters.priority && r.priority !== filters.priority) return false;
+      return true;
+    });
+
+    const grouped = {};
+    STATUS_ORDER.forEach(s => { grouped[s] = []; });
+    filtered.forEach(r => {
+      const s = STATUS_ORDER.includes(r.status) ? r.status : 'new';
+      grouped[s].push(r);
+    });
+
+    area.innerHTML = `
+      <div class="req-columns${showDeclined ? ' show-declined' : ''}">
+        ${cols.map(s => renderCol(s, grouped[s])).join('')}
+      </div>
+    `;
+
+    area.querySelectorAll('.req-status-select').forEach(sel => {
+      sel.addEventListener('change', e => changeStatus(e.target.dataset.id, e.target.value));
+    });
+    area.querySelectorAll('.req-notes-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        openNotesId = openNotesId === btn.dataset.id ? null : btn.dataset.id;
+        renderColumns();
+      });
+    });
+    if(openNotesId){
+      const editor = area.querySelector(`.req-notes-editor[data-id="${openNotesId}"]`);
+      if(editor){
+        const ta = editor.querySelector('textarea');
+        setTimeout(() => { ta.focus(); ta.selectionStart = ta.selectionEnd = ta.value.length; }, 30);
+        editor.querySelector('.req-notes-cancel').addEventListener('click', () => {
+          openNotesId = null; renderColumns();
+        });
+        editor.querySelector('.req-notes-save').addEventListener('click', () => {
+          saveNotes(openNotesId, ta.value);
+        });
+      }
+    }
+  }
+
+  function renderCol(status, list){
+    const cards = list.length
+      ? list.map(renderCard).join('')
+      : `<div class="req-col-empty">— vacío —</div>`;
+    return `
+      <div class="req-col" data-status="${status}">
+        <div class="req-col-header">
+          <span class="req-col-title">${esc(STATUS_LABELS[status])}</span>
+          <span class="req-col-count">${list.length}</span>
+        </div>
+        ${cards}
+      </div>
+    `;
+  }
+
+  function renderCard(r){
+    const prio = ['quick','medium','urgent'].includes(r.priority) ? r.priority : 'medium';
+    const notesOpen = openNotesId === String(r.id);
+    const hasNotes  = r.admin_notes && String(r.admin_notes).trim().length > 0;
+    const statusOpts = STATUS_ORDER.map(s =>
+      `<option value="${s}"${s === r.status ? ' selected' : ''}>${esc(STATUS_LABELS[s])}</option>`
+    ).join('');
+    const requester = r.requester || '—';
+    const emailTitle = r.email ? ` · ${esc(r.email)}` : '';
+    return `
+      <div class="req-card" data-id="${esc(r.id)}">
+        <div class="req-card-badges">
+          <span class="req-project-badge" title="${esc(r.project || '')}">${esc(r.project || 'Sin proyecto')}</span>
+          <span class="req-priority-badge req-priority-${prio}"><span class="prio-dot"></span>${esc(PRIORITY_LABELS[prio])}</span>
+        </div>
+        <div class="req-card-desc">${esc(r.description || '')}</div>
+        <div class="req-card-meta">
+          <span class="who" title="${esc(requester)}${emailTitle}">${esc(requester)}</span>
+          <span>${esc(fmtRelative(r.created_at))}</span>
+        </div>
+        <div class="req-card-actions">
+          <select class="req-status-select" data-id="${esc(r.id)}" aria-label="Cambiar estado">${statusOpts}</select>
+          <button class="req-notes-btn${hasNotes ? ' has-notes' : ''}" type="button" data-id="${esc(r.id)}">${hasNotes ? 'Nota' : '+ Nota'}</button>
+        </div>
+        ${notesOpen ? `
+          <div class="req-notes-editor" data-id="${esc(r.id)}">
+            <textarea placeholder="Notas internas (solo admin)…">${esc(r.admin_notes || '')}</textarea>
+            <div class="req-notes-actions">
+              <button class="req-notes-cancel" type="button">Cancelar</button>
+              <button class="req-notes-save" type="button">Guardar</button>
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  async function changeStatus(id, status){
+    const row = rows.find(r => String(r.id) === String(id));
+    if(!row) return;
+    const prev = row.status;
+    row.status = status;
+    renderColumns();
+    updateTabBadge(rows.filter(r => r.status === 'new').length);
+    const { error } = await sb.from('requests').update({ status }).eq('id', id);
+    if(error){
+      console.error(error);
+      row.status = prev;
+      renderColumns();
+      updateTabBadge(rows.filter(r => r.status === 'new').length);
+      alert('No pude actualizar el estado: ' + (error.message || error));
+    }
+  }
+
+  async function saveNotes(id, value){
+    const row = rows.find(r => String(r.id) === String(id));
+    if(!row) return;
+    const prev = row.admin_notes;
+    row.admin_notes = value;
+    openNotesId = null;
+    renderColumns();
+    const { error } = await sb.from('requests').update({ admin_notes: value }).eq('id', id);
+    if(error){
+      console.error(error);
+      row.admin_notes = prev;
+      renderColumns();
+      alert('No pude guardar la nota: ' + (error.message || error));
+    }
+  }
 })();
 </script>
 
